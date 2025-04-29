@@ -1,6 +1,8 @@
 package game
 
-import "math"
+import (
+	"math"
+)
 
 type Collision struct {
 	g *Game
@@ -20,8 +22,7 @@ func (c *Collision) BallRect(screenWidth int, screenHeight int) {
 
 	if distance < ball.Radius {
 		if distance == 0 {
-			// Special case: ball center exactly inside rectangle
-			distance = 0.01 // Avoid division by zero
+			distance = 0.01
 		}
 		nx := dx / distance
 		ny := dy / distance
@@ -29,6 +30,27 @@ func (c *Collision) BallRect(screenWidth int, screenHeight int) {
 		overlap := ball.Radius - distance
 		ball.X += nx * overlap
 		ball.Y += ny * overlap
+	}
+}
+
+func (c *Collision) ColiderRect(screenWidth int, screenHeight int) {
+	ball := c.g.Ball
+	collider := c.g.Colider
+	rect := c.g.Rect
+
+	closestX := c.closest(collider.X, rect.X, rect.X+rect.Width)
+	closestY := c.closest(collider.Y, rect.Y, rect.Y+rect.Height)
+
+	dx := collider.X - closestX
+	dy := collider.Y - closestY
+
+	distance := float32(math.Sqrt(float64(dx*dx + dy*dy)))
+
+	if distance < ball.Radius {
+		ball.IsOnSurface = true
+		ball.Jumps = 2
+	} else {
+		ball.IsOnSurface = false
 	}
 }
 

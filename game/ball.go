@@ -21,19 +21,23 @@ type Ball struct {
 	SpeedX          float32
 	SpeedY          float32
 	MaxSpeed        float32
+	JumpSpeed       float32
 	Acceleration    float32
 	Deceleration    float32
+	Jumps           int
+	IsOnSurface     bool
 	LastAccelerated time.Time
 	LastDecelerated time.Time
 }
 
-func NewBall(x, y, radius, maxSpeed, acceleration, deceleration float32, color color.Color) *Ball {
+func NewBall(x, y, radius, maxSpeed, jumpSpeed, acceleration, deceleration float32, color color.Color) *Ball {
 	return &Ball{
 		X:            x,
 		Y:            y,
 		Radius:       radius,
 		Color:        color,
 		MaxSpeed:     maxSpeed,
+		JumpSpeed:    jumpSpeed,
 		Acceleration: acceleration,
 		Deceleration: deceleration,
 	}
@@ -64,10 +68,9 @@ func (b *Ball) Update(screenWidth int, screenHeight int) {
 		}
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyW) {
-		if time.Since(b.LastAccelerated) > accelerationTime {
-			if b.SpeedY > -b.MaxSpeed {
-				b.SpeedY -= b.Acceleration
-			}
+		if b.Jumps > 0 {
+			b.SpeedY = -b.JumpSpeed
+			b.Jumps--
 		}
 	}
 
@@ -115,6 +118,15 @@ func (b *Ball) Update(screenWidth int, screenHeight int) {
 	}
 	if b.Y+b.Radius > float32(screenHeight) {
 		b.Y = float32(screenHeight) - b.Radius
+	}
+
+	// gravitation
+	if !b.IsOnSurface {
+		if time.Since(b.LastAccelerated) > accelerationTime {
+			if b.SpeedY < b.MaxSpeed {
+				b.SpeedY += b.Acceleration
+			}
+		}
 	}
 }
 
