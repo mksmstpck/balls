@@ -11,7 +11,6 @@ import (
 const (
 	accelerationTime time.Duration = 500 * time.Millisecond
 	decelerationTime time.Duration = 250 * time.Millisecond
-	startSpeed                     = 4.0
 )
 
 type Ball struct {
@@ -21,12 +20,23 @@ type Ball struct {
 	Color           color.Color
 	SpeedX          float32
 	SpeedY          float32
-	StartSpeed      float32
 	MaxSpeed        float32
 	Acceleration    float32
 	Deceleration    float32
 	LastAccelerated time.Time
 	LastDecelerated time.Time
+}
+
+func NewBall(x, y, radius, maxSpeed, acceleration, deceleration float32, color color.Color) *Ball {
+	return &Ball{
+		X:            x,
+		Y:            y,
+		Radius:       radius,
+		Color:        color,
+		MaxSpeed:     maxSpeed,
+		Acceleration: acceleration,
+		Deceleration: deceleration,
+	}
 }
 
 func (b *Ball) Update(screenWidth int, screenHeight int) {

@@ -12,18 +12,10 @@ type Game struct {
 }
 
 func NewGame() *Game {
+	ball := NewBall(100, 50, 20, 10, 0.5, 0.1, color.White)
+
 	return &Game{
-		Ball: &Ball{
-			X:            100,
-			Y:            50,
-			Radius:       20,
-			Color:        color.White,
-			SpeedX:       0,
-			SpeedY:       0,
-			MaxSpeed:     20,
-			Acceleration: 1,
-			Deceleration: 1,
-		},
+		Ball: ball,
 		Rect: &Rect{
 			Height: 100,
 			Width:  100,
